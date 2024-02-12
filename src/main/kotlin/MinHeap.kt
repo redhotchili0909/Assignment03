@@ -31,6 +31,7 @@ class MinHeap<T> {
     }
 
     /**
+     * Gets the minimum value from the heap and removes it.
      * @return the minimum value in the heap (or null if heap is empty)
      */
     fun getMin(): T? {
@@ -91,11 +92,20 @@ class MinHeap<T> {
         val startNumber = vertices[startIndex].second
         val leftIndex = getLeftIndex(of=startIndex)
         val rightIndex = getRightIndex(of=startIndex)
-        val leftNumber = if (leftIndex >= vertices.size) Double.POSITIVE_INFINITY else vertices[leftIndex].second
-        val rightNumber = if (rightIndex >= vertices.size) Double.POSITIVE_INFINITY else vertices[rightIndex].second
-        if (startNumber < leftNumber && startNumber < rightNumber) {
+        val leftNumber = if (leftIndex >= vertices.size) null else vertices[leftIndex].second
+        val rightNumber = if (rightIndex >= vertices.size) null else vertices[rightIndex].second
+
+        /*
+         * We determine whether we need to continue with bubbling
+         * Case 1: for each child, either the number is less or the child doesn't exist
+         * Case 2: either the right child doesn't exist (meaning the left child must) or
+         *    the right child exists, the left child exists, and left is smaller than right
+         * Case 3: this will capture the case where we need to swap to the right
+         */
+        if ((leftNumber == null || startNumber < leftNumber) &&
+            (rightNumber == null || startNumber < rightNumber)) {
             return
-        } else if (leftNumber < rightNumber) {
+        } else if (rightNumber == null || (leftNumber != null && leftNumber < rightNumber)) {
             // swap with left since it is smallest
             swap(leftIndex, startIndex)
             bubbleDown(leftIndex)
